@@ -8,12 +8,12 @@ import Connect from './components/Wallet';
 
 function App() {
 
-const [ userAddress , setUserAddress ] = useState()
+const [ provider, setProvider ] = useState() 
 
   return (
    <>
- <Connect/>
- <TokenCreator/>
+ <Connect setProvider = {setProvider}/>
+ <TokenCreator provider = {provider}/>
    </>
   );
 }

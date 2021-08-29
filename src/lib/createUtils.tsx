@@ -78,8 +78,8 @@ export const createNewToken = async (
       null,
       [mintAccount],
       wallet
-    );
-    return mintAccount.publicKey.toString();
+    ).then((d) => { console.log(d)});
+    return mintAccount;
   } else {
     const token = await Token.createMint(
       getConnection(),
@@ -89,7 +89,7 @@ export const createNewToken = async (
       decimals,
       TOKEN_PROGRAM_ID
     );
-    return token.publicKey.toString();
+    return token;
   }
 };
 
@@ -189,7 +189,7 @@ export const createTokenAccount = async (
       wallet
     );
 
-    return newAccount.publicKey.toBase58();
+    return newAccount;
   } else {
     const token = new Token(
       getConnection(),

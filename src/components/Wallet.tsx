@@ -6,6 +6,7 @@ import {
   clusterApiUrl,
   SystemProgram
 } from "@solana/web3.js";
+import { isPropertySignature } from "typescript";
 
 type DisplayEncoding = "utf8" | "hex";
 type PhantomEvent = "disconnect" | "connect";
@@ -50,7 +51,7 @@ const getProvider = (): PhantomProvider | undefined => {
 
 const NETWORK = clusterApiUrl("devnet");
 
-export default function Connect() {
+export default function Connect(props : any) {
 
   const provider = getProvider();
   
@@ -65,6 +66,7 @@ export default function Connect() {
     if (provider) {
       provider.on("connect", () => {
         setConnected(true);
+        props.setProvider(provider)
       });
       provider.on("disconnect", () => {
         setConnected(false);
