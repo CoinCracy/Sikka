@@ -4,7 +4,8 @@ import {
   MintLayout,
   Token,
   AccountLayout,
-  TOKEN_PROGRAM_ID
+  TOKEN_PROGRAM_ID,
+  u64
 } from "@solana/spl-token";
 import { createAccount } from "./account";
 import { UtilizeWallet, sendTxUsingExternalSignature } from "./Transaction";
@@ -49,9 +50,13 @@ export const createNewToken = async (
 ) => {
   const connection = getConnection();
   if (signExternally) {
+
+   
     const wallet = await UtilizeWallet();
    
+
     const mintAccount = new Account();
+
     const createAccIx = SystemProgram.createAccount({
       //@ts-expect-error
       fromPubkey: wallet.publicKey,
@@ -63,7 +68,7 @@ export const createNewToken = async (
       space: MintLayout.span,
       programId: TOKEN_PROGRAM_ID
     });
-
+    
     const initMintIx = Token.createInitMintInstruction(
       TOKEN_PROGRAM_ID,
       mintAccount.publicKey,
@@ -78,8 +83,13 @@ export const createNewToken = async (
       null,
       [mintAccount],
       wallet
-    ).then((d) => { console.log(d)});
+    ).then((d) => {
+      console.log(d)
+    });
+
+   
     return mintAccount;
+
   } else {
     const token = await Token.createMint(
       getConnection(),
@@ -199,5 +209,65 @@ export const createTokenAccount = async (
     );
 
     return (await token.createAccount(ownerPubkey)).toString();
+  }
+};
+
+export const mintToken = async (
+  feePayerSecret: string,
+  mintAuthoritySecret: string,
+  destinationAccountAddress: string,
+  amount: u64,
+  feePayerSignsExternally: boolean,
+  mintAuthoritySignsExternally: boolean
+) => {
+  const destinationPubkey = new PublicKey(destinationAccountAddress);
+  const tokenMintPubkey = await getMintPubkeyFromTokenAccountPubkey(
+    destinationPubkey
+  );
+  const connection = getConnection();
+
+  if (mintAuthoritySignsExternally || feePayerSignsExternally) {
+    const wallet = await UtilizeWallet();
+
+    const mintAuthorityAccOrWallet = mintAuthoritySignsExternally
+      ? wallet
+      : await createAccount(mintAuthoritySecret);
+
+    const mintIx = Token.createMintToInstruction(
+      TOKEN_PROGRAM_ID,
+      tokenMintPubkey,
+      destinationPubkey,
+        //@ts-expect-error
+      mintAuthorityAccOrWallet.publicKey,
+      [],
+      amount
+    );
+
+    await sendTxUsingExternalSignature(
+      [mintIx],
+      connection,
+      feePayerSignsExternally ? null : await createAccount(feePayerSecret),
+        //@ts-expect-error
+      mintAuthoritySignsExternally ? [] : [mintAuthorityAccOrWallet],
+      wallet
+    );
+
+    return destinationPubkey.toBase58();
+  } else {
+    const token = new Token(
+      connection,
+      tokenMintPubkey,
+      TOKEN_PROGRAM_ID,
+      await createAccount(feePayerSecret)
+    );
+
+    await token.mintTo(
+      destinationPubkey,
+      await createAccount(mintAuthoritySecret),
+      [],
+      amount
+    );
+
+    return destinationPubkey.toBase58();
   }
 };
