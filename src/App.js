@@ -2,7 +2,7 @@ import { Token } from '@solana/spl-token';
 import React ,{ useState , useEffect} from 'react'
 import './App.css';
 
-import TokenCreator from './components/token';
+import TokenCreator from './components/token.jsx';
 import Connect from './components/Wallet';
 
 

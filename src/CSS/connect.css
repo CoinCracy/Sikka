@@ -1,0 +1,14 @@
+.connect-button{
+    float: right;
+    margin: 20px 30px;
+    padding:10px;
+    cursor: pointer;
+    background-color: #082032;
+    border-radius: 20px;
+    color: whitesmoke;
+}
+.connect-button:hover{
+    background-color : #000000;
+   color:white;
+   transition-duration: 0.3s;
+}

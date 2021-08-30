@@ -6,7 +6,8 @@ import {
   clusterApiUrl,
   SystemProgram
 } from "@solana/web3.js";
-import { isPropertySignature } from "typescript";
+import "../CSS/connect.css"
+
 
 type DisplayEncoding = "utf8" | "hex";
 type PhantomEvent = "disconnect" | "connect";
@@ -147,19 +148,21 @@ export default function Connect(props : any) {
   };
 
   return (
-    <div className="connect-button">
+    <div id="connect-button">
       <main>
         {provider && provider.publicKey ? (
           <>
-            <div>Wallet address: {provider.publicKey?.toBase58()}.</div>
-            <div>autoApprove: {provider.autoApprove ? "true" : "false"} </div>
-            <button onClick={() => provider.disconnect()}>Disconnect</button>
+            <div className ="connect-button" onClick={() => provider.disconnect()}> 
+            {provider.publicKey?.toBase58().slice(0,5)}... {provider.publicKey?.toBase58().slice(-5)}
+            </div>
+            {/* <div>autoApprove: {provider.autoApprove ? "true" : "false"} </div> */}
+            {/* <button onClick={() => provider.disconnect()}>Disconnect</button> */}
           </>
         ) : (
           <>
-            <button onClick={() => provider.connect()}>
-              Connect to Phantom
-            </button>
+            <div className ="connect-button" onClick={() => provider.connect()}>
+              Connect
+            </div>
           </>
         )}
       </main>
