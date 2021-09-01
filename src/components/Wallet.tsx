@@ -148,6 +148,8 @@ export default function Connect(props : any) {
   };
 
   return (
+  <div id = "navbar"> 
+<h2>Sikka - Democratizing Tokens</h2>
     <div id="connect-button">
       <main>
         {provider && provider.publicKey ? (
@@ -166,6 +168,7 @@ export default function Connect(props : any) {
           </>
         )}
       </main>
+    </div>
     </div>
   );
 }

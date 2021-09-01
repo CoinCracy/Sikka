@@ -1,5 +1,5 @@
 import React , {useState} from 'react'
-import { Connection,  clusterApiUrl } from "@solana/web3.js";
+import { Connection,  clusterApiUrl , TokenAccountsFilter} from "@solana/web3.js";
 
 
 // CSS 
@@ -7,6 +7,7 @@ import "../CSS/token.css"
 //Utils
 import { createNewToken , createTokenAccount, getMintPubkeyFromTokenAccountPubkey ,InitializeMintTo, mintToken } from '../lib/createUtils'
 import { getNodeRpcURL, getTxExplorerURL, getNodeWsURL ,getAccountExplorerURL  } from '../lib/utils';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 function TokenCreator(props) {
 
@@ -30,37 +31,37 @@ function TokenCreator(props) {
 
  
 
-async function createToken(props) { 
+async function createToken() { 
 
-    let mintAuthority = document.getElementById("mintAuthority").value;
-    let freezeAuthority = document.getElementById("freezeAuthority").value;
     let decimals = document.getElementById("decimals").value;
  
      try {
-    const tokenInit = await createNewToken(null , mintAuthority , freezeAuthority , decimals , true).then((data) =>
+    const tokenInit = await createNewToken(null , props.provider.publicKey , props.provider.publicKey, decimals , true).then((data) =>
       {
       console.log(data)
       console.log(data.publicKey.toString())
-      setMintAuthority(mintAuthority)
+      setMintAuthority(props.provider.publicKey)
       setTokenAddress(data.publicKey.toString())
       setStep(2)
       })
-    console.log(tokenInit)
+const tokenFilter = new connection.TokenAccountsFilter({
+  programId : TOKEN_PROGRAM_ID
+})
+  console.log(await connection.getTokenAccountsByOwner(props.provider.publicKey , tokenFilter))
      } catch (error) {
        console.log(error)
      }
   
 }
 
-
 async function createTokenAcc() {
  try {
   await createTokenAccount(null , tokenAddress , mintAuthorityAddress , true).then((data) => {
     console.log(data.publicKey.toString())
     setTokenAccountAddress(data.publicKey.toString())
-
     setStep(3) 
   })
+ console.log( await connection.getTokenAccountsByOwner(props.provider.publicKey))
  } catch (error) {
    console.log(error)
  }
@@ -71,31 +72,54 @@ async function InitializeMintTo() {
 const tokenSupply = document.getElementById("token-supply").value
  const mintedTokens = await  mintToken( null , null , tokenAccountAddress , tokenSupply , true , true)
  console.log(mintedTokens)
+ props.setToken({mintAddress : tokenAddress , accountAddress : tokenAccountAddress })
+ setStep(4)
 }
 
 return (
 <div id="create-token">
 
-  <div id="create-mint">
-  <input id= "mintAuthority" placeholder= "Mint Authority"   type="text"></input>
-  <input id="freezeAuthority" placeholder= "Freeze Authority" type="text"></input>
+{step === 1 ? 
+  <div className = "step" id="create-mint">
   <input id="decimals" placeholder= "Decimals" type="text"></input>
   <button onClick={ createToken } >Create Token </button>
-  </div> 
-  {step >= 2 ? 
-  <div id="initialize-token-account">
+  </div>
+   :  
+   <div className = "step" id="create-mint">
+  <input disabled id="decimals" placeholder= "Decimals" type="text"></input>
+  <button disabled onClick={ createToken } >Create Token </button>
+  </div>
+  }
+  
+  {step === 2 ? 
+  <div className = "step" id="initialize-token-account">
   <button onClick={ createTokenAcc } > Initialize A Token Account </button>
+  </div> :
+  step >= 2 ? 
+  <div className = "step" id="initialize-token-account">
+  <button disabled onClick={ createTokenAcc } > Initialize A Token Account </button>
   </div> 
   : null }
 
-  {step >= 3 ? 
-  <div id="transfer-token">
+  {step === 3 ? 
+  <div className = "step" id="transfer-token">
  <input id="token-supply" placeholder= "Token Supply" type="text"></input>
   <button onClick={() =>  InitializeMintTo()} > Mint Tokens</button>
   </div> 
-  : 
+  :
+   step >= 3 ? 
+  <div className = "step"  id="transfer-token">
+ <input disabled id="token-supply" placeholder= "Token Supply" type="text"></input>
+  <button disabled onClick={() =>  InitializeMintTo()} > Mint Tokens</button>
+  </div>
+   :
   null}
 
+{
+  step === 4 ? 
+  <h1>Congratulations! Your Token Has Been Minted</h1>
+  : null
+}
     </div>
 )
 
