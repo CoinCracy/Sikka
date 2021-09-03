@@ -7,7 +7,7 @@ import {
 import TokenCreator from './components/token.jsx';
 import Connect from './components/Wallet';
 import Dashboard from './components/Dashboard';
-
+import 'semantic-ui-css/semantic.min.css';
 function App() {
 
 const [ provider, setProvider ] = useState() 

@@ -7,7 +7,11 @@ import {
   SystemProgram
 } from "@solana/web3.js";
 import "../CSS/connect.css"
-
+import Header from './Header';
+import CreateToken from './createToken';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js';
+import VerticalLinearStepper from './verticalBar';
 
 type DisplayEncoding = "utf8" | "hex";
 type PhantomEvent = "disconnect" | "connect";
@@ -46,7 +50,7 @@ const getProvider = (): PhantomProvider | undefined => {
       return provider;
     }
   }
-  window.open("https://phantom.app/", "_blank");
+
 };
 
 
@@ -73,7 +77,7 @@ export default function Connect(props : any) {
         setConnected(false);
       });
       // try to eagerly connect
-      provider.connect()
+      provider.connect();
       return () => {
         provider.disconnect();
       };
@@ -148,27 +152,13 @@ export default function Connect(props : any) {
   };
 
   return (
-  <div id = "navbar"> 
-<h2>Sikka - Democratizing Tokens</h2>
-    <div id="connect-button">
-      <main>
-        {provider && provider.publicKey ? (
-          <>
-            <div className ="connect-button" onClick={() => provider.disconnect()}> 
-            {provider.publicKey?.toBase58().slice(0,5)}... {provider.publicKey?.toBase58().slice(-5)}
-            </div>
-            {/* <div>autoApprove: {provider.autoApprove ? "true" : "false"} </div> */}
-            {/* <button onClick={() => provider.disconnect()}>Disconnect</button> */}
-          </>
-        ) : (
-          <>
-            <div className ="connect-button" onClick={() => provider.connect()}>
-              Connect
-            </div>
-          </>
-        )}
-      </main>
-    </div>
-    </div>
+  <>
+  {/* <div className="shadow-box-example hoverable"> */}
+
+    <Header></Header>
+    <VerticalLinearStepper></VerticalLinearStepper>
+    {/* <CreateToken></CreateToken> */}
+  
+    </>
   );
 }

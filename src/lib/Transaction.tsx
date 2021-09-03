@@ -49,7 +49,7 @@ const getProvider = ()=> {
       return provider;
     }
   }
-  window.open("https://phantom.app/", "_blank");
+  //window.open("https://phantom.app/", "_blank");
 };
 
 const wallet = getProvider()
