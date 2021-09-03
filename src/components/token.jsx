@@ -1,7 +1,7 @@
-import React , {useState} from 'react'
-import { Connection,  clusterApiUrl , TokenAccountsFilter} from "@solana/web3.js";
-
-
+import React , {useState , useEffect} from 'react'
+import { Connection,  clusterApiUrl , PublicKey} from "@solana/web3.js";
+import Dashboard from './Dashboard';
+import {useHistory } from 'react-router-dom'
 // CSS 
 import "../CSS/token.css"
 //Utils
@@ -23,13 +23,23 @@ function TokenCreator(props) {
     devnet: { url: clusterApiUrl("devnet"), displayName: "Devnet" },
     testnet: { url: clusterApiUrl("testnet"), displayName: "Testnet" },
   };
-  
+  const history = useHistory();
   const solanaNetwork = networks.devnet;
   const connection = new Connection(solanaNetwork.url);
 
   const getConnection = () => connection;
 
- 
+  useEffect(() => {
+
+    return () => {
+      
+    }
+  },[])
+  
+  const  dash = () => {
+    let path = `Dashboard`; 
+    history.push(path);
+  }
 
 async function createToken() { 
 
@@ -44,10 +54,7 @@ async function createToken() {
       setTokenAddress(data.publicKey.toString())
       setStep(2)
       })
-const tokenFilter = new connection.TokenAccountsFilter({
-  programId : TOKEN_PROGRAM_ID
-})
-  console.log(await connection.getTokenAccountsByOwner(props.provider.publicKey , tokenFilter))
+
      } catch (error) {
        console.log(error)
      }
@@ -61,7 +68,12 @@ async function createTokenAcc() {
     setTokenAccountAddress(data.publicKey.toString())
     setStep(3) 
   })
- console.log( await connection.getTokenAccountsByOwner(props.provider.publicKey))
+
+  console.log(tokenAddress)
+  const tokenAccounts = await connection.getTokenAccountsByOwner(new PublicKey(props.provider.publicKey.toString()) , {
+    programId: TOKEN_PROGRAM_ID})
+  console.log(tokenAccounts.value)
+  console.log(tokenAddress)
  } catch (error) {
    console.log(error)
  }
@@ -75,6 +87,7 @@ const tokenSupply = document.getElementById("token-supply").value
  props.setToken({mintAddress : tokenAddress , accountAddress : tokenAccountAddress })
  setStep(4)
 }
+
 
 return (
 <div id="create-token">
@@ -117,9 +130,13 @@ return (
 
 {
   step === 4 ? 
-  <h1>Congratulations! Your Token Has Been Minted</h1>
+  <>
+  <button onClick={ dash }> Dashboard</button>
+  </>
   : null
 }
+
+
     </div>
 )
 

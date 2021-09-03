@@ -46,7 +46,7 @@ const getProvider = (): PhantomProvider | undefined => {
       return provider;
     }
   }
-  window.open("https://phantom.app/", "_blank");
+  // window.open("https://phantom.app/", "_blank");
 };
 
 
@@ -83,69 +83,6 @@ export default function Connect(props : any) {
   if (!provider) {
     return <h2>Could not find a provider</h2>;
   }
-
-  const createTransferTransaction = async () => {
-    if (!provider.publicKey) {
-      return;
-    }
-    let transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: provider.publicKey,
-        toPubkey: provider.publicKey,
-        lamports: 100
-      })
-    );
-    transaction.feePayer = provider.publicKey;
-    addLog("Getting recent blockhash");
-    (transaction as any).recentBlockhash = (
-      await connection.getRecentBlockhash()
-    ).blockhash;
-    return transaction;
-  };
-
-  const sendTransaction = async () => {
-    const transaction = await createTransferTransaction();
-    if (transaction) {
-      try {
-        let signed = await provider.signTransaction(transaction);
-        addLog("Got signature, submitting transaction");
-        let signature = await connection.sendRawTransaction(signed.serialize());
-        addLog(
-          "Submitted transaction " + signature + ", awaiting confirmation"
-        );
-        await connection.confirmTransaction(signature);
-        addLog("Transaction " + signature + " confirmed");
-      } catch (e) {
-        console.warn(e);
-        addLog("Error");
-      }
-    }
-  };
-
-  const signMultipleTransactions = async (onlyFirst: boolean = false) => {
-    const [transaction1, transaction2] = await Promise.all([
-      createTransferTransaction(),
-      createTransferTransaction()
-    ]);
-    if (transaction1 && transaction2) {
-      let signature;
-      if (onlyFirst) {
-        signature = await provider.signAllTransactions([transaction1]);
-      } else {
-        signature = await provider.signAllTransactions([
-          transaction1,
-          transaction2
-        ]);
-      }
-      addLog("Signature " + signature);
-    }
-  };
-
-  const signMessage = async (message: string) => {
-    const data = new TextEncoder().encode(message);
-    await provider.signMessage(data);
-    addLog("Message signed");
-  };
 
   return (
   <div id = "navbar"> 
