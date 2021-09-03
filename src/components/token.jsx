@@ -1,11 +1,11 @@
 import React , {useState , useEffect} from 'react'
 import { Connection,  clusterApiUrl , PublicKey} from "@solana/web3.js";
 import Dashboard from './Dashboard';
-import {useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 // CSS 
 import "../CSS/token.css"
 //Utils
-import { createNewToken , createTokenAccount, getMintPubkeyFromTokenAccountPubkey ,InitializeMintTo, mintToken } from '../lib/createUtils'
+import { createNewToken , createTokenAccount, createAssociatedTokenAccount, mintToken } from '../lib/createUtils'
 import { getNodeRpcURL, getTxExplorerURL, getNodeWsURL ,getAccountExplorerURL  } from '../lib/utils';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
@@ -63,9 +63,9 @@ async function createToken() {
 
 async function createTokenAcc() {
  try {
-  await createTokenAccount(null , tokenAddress , mintAuthorityAddress , true).then((data) => {
-    console.log(data.publicKey.toString())
-    setTokenAccountAddress(data.publicKey.toString())
+  await createAssociatedTokenAccount(null , true, tokenAddress , mintAuthorityAddress , true).then((data) => {
+    console.log(data)
+    setTokenAccountAddress(data)
     setStep(3) 
   })
 
