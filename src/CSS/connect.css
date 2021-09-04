@@ -1,11 +1,17 @@
 #navbar {
-    background-color: black;
+    background: linear-gradient(293.74deg, #1556D9 22.95%, #1D69FC 93.7%);
     height: 50px;
     padding: 10px;
 }
 #navbar h2 {
     margin : 0;
     color : white;
+}
+.navbarHead {
+    background: linear-gradient(293.74deg, #1556D9 22.95%, #1D69FC 93.7%);
+}
+.header{
+    color: whitesmoke;
 }
 
 .connect-button{

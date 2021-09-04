@@ -81,12 +81,14 @@ export default function Connect(props : any) {
   }, [provider]);
   
   if (!provider) {
-    return <h2>Could not find a provider</h2>;
+    return <div className = "navbarHead"> 
+     <h2 className ="header">Could not find a provider</h2>
+    </div>;
   }
 
   return (
   <div id = "navbar"> 
-<h2>Sikka - Democratizing Tokens</h2>
+<h2  className ="header">Sikka - Democratizing Tokens</h2>
     <div id="connect-button">
       <main>
         {provider && provider.publicKey ? (
