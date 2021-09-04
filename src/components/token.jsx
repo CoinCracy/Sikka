@@ -46,6 +46,10 @@ async function createToken() {
 
     let decimals = document.getElementById("decimals").value;
  
+    let name = document.getElementById("name")
+    let symbol = document.getElementById("symbol")
+
+    
      try {
     const tokenInit = await createNewToken(null , props.provider.publicKey , props.provider.publicKey, decimals , true).then((data) =>
       {

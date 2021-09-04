@@ -10,6 +10,8 @@ const TokenSteps = ({
         switch(step) {
             case 1:
                 return  <>
+                           <input id="name" className = "name" placeholder= "Name" type="text"></input>
+                           <input id="symbol" className = "symbol" placeholder= "symbol" type="text"></input>
                             <input id="decimals" className = "decimals" placeholder= "Decimals" type="text"></input>
                             <button className = "decimals-button" onClick={ onClick } >Create Token </button>
                         </>

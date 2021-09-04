@@ -80,11 +80,7 @@ export default function Connect(props : any) {
     }
   }, [provider]);
   
-  if (!provider) {
-    return <div className = "navbarHead"> 
-     <h2 className ="header">Could not find a provider</h2>
-    </div>;
-  }
+
 
   return (
   <div id = "navbar"> 
@@ -104,7 +100,7 @@ export default function Connect(props : any) {
           </>
         ) : (
           <>
-            <div className ="connect-button" onClick={() => provider.connect()}>
+            <div className ="connect-button" onClick={() => provider?.connect()}>
               Connect
             </div>
           </>

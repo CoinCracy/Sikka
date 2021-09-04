@@ -13,14 +13,13 @@ function App() {
 
 const [ provider, setProvider ] = useState() 
 const [token , setToken ] = useState({ mintAddress : null , accountAddress : null })
-
   return (
    <>
 <Router>
 <Connect setProvider = {setProvider}/>
 
  <Route exact path='/' >
-   <SikkaLandingPage setToken=  {setToken} provider = {provider}/>
+   <SikkaLandingPage  setToken=  {setToken} provider = {provider}/>
  </Route>
  
  <Route exact path='/Dashboard'>
