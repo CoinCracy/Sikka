@@ -19,7 +19,7 @@ const [token , setToken ] = useState({ mintAddress : null , accountAddress : nul
 <Connect setProvider = {setProvider}/>
 
  <Route exact path='/' >
- <TokenCreator setToken=  {setToken} provider = {provider}/>
+ <TokenCreator setToken=  {setToken}  provider = {provider}/>
  </Route>
  
  <Route exact path='/Dashboard'>

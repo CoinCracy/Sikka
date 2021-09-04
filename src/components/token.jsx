@@ -49,7 +49,7 @@ async function createToken() {
     const tokenInit = await createNewToken(null , props.provider.publicKey , props.provider.publicKey, decimals , true).then((data) =>
       {
       console.log(data)
-      console.log(data.publicKey.toString())
+      console.log("Mint Address" , data.publicKey.toString())
       setMintAuthority(props.provider.publicKey)
       setTokenAddress(data.publicKey.toString())
       setStep(2)
@@ -64,7 +64,7 @@ async function createToken() {
 async function createTokenAcc() {
  try {
   await createAssociatedTokenAccount(null , true, tokenAddress , mintAuthorityAddress , true).then((data) => {
-    console.log(data)
+    console.log("Associated Token Account " , data)
     setTokenAccountAddress(data)
     setStep(3) 
   })

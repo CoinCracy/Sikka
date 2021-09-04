@@ -281,27 +281,10 @@ export const mintToken = async (
   }
 };
 
-
-export const findAssociatedTokenAccountPublicKey = async (
-  ownerPublicKey: PublicKey,
-  tokenMintPublicKey: PublicKey
-) =>
-  (
-    await PublicKey.findProgramAddress(
-      [
-        ownerPublicKey.toBuffer(),
-        TOKEN_PROGRAM_ID.toBuffer(),
-        tokenMintPublicKey.toBuffer()
-      ],
-      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
-    )
-  )[0];
-
 const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
   "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 );
 
-// Create Instructions 
 const createIx = (
   funderPubkey: PublicKey,
   associatedTokenAccountPublicKey: PublicKey,
@@ -325,6 +308,25 @@ const createIx = (
       { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false }
     ]
   });
+
+  //Finds Associated Token Account Public key
+export const findAssociatedTokenAccountPublicKey = async (
+  ownerPublicKey: PublicKey,
+  tokenMintPublicKey: PublicKey
+) =>
+  (
+    await PublicKey.findProgramAddress(
+      [
+        ownerPublicKey.toBuffer(),
+        TOKEN_PROGRAM_ID.toBuffer(),
+        tokenMintPublicKey.toBuffer()
+      ],
+      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+    )
+  )[0];
+
+
+// Create Instructions 
 
 
 
