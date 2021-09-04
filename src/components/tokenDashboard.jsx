@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {useParams} from 'react-router-dom'
 import TransferModal from './Utility/Transfer' 
+import MintModal from './Utility/Mint' 
 
 
 const getProvider = () => {
@@ -26,8 +27,8 @@ function TokenDashboard(props) {
     })
 return (
     <div>
-        <h1>Hello</h1>
         <TransferModal provider={provider} mintAddress = { id }/>
+        <MintModal provider={provider} mintAddress = { id }/>
     </div>
 )
 }

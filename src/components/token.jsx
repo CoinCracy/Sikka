@@ -94,11 +94,15 @@ return (
 
 {step === 1 ? 
   <div className = "step" id="create-mint">
+  <input id="token-name" placeholder= "Token Name" type="text"></input>
+  <input id="token-code" placeholder= "Token Code" type="text"></input>
   <input id="decimals" placeholder= "Decimals" type="text"></input>
   <button onClick={ createToken } >Create Token </button>
   </div>
    :  
    <div className = "step" id="create-mint">
+  <input disabled id="token-name" placeholder= "Token Name" type="text"></input>
+  <input disabled id="token-code" placeholder= "Token Code" type="text"></input>
   <input disabled id="decimals" placeholder= "Decimals" type="text"></input>
   <button disabled onClick={ createToken } >Create Token </button>
   </div>
