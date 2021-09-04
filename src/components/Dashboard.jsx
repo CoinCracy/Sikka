@@ -3,6 +3,7 @@ import { useParams , useHistory } from "react-router-dom";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
 import { getMintPubkeyFromTokenAccountPubkey } from "../lib/createUtils";
+import "../CSS/dashboard.scss"
 
 const getProvider = () => {
   if ("solana" in window) {
@@ -100,20 +101,20 @@ function Dashboard(props) {
   return (
     <>
       <hr></hr>
-      <h1> Dashboard </h1>
+      <h1  className="dashboardHeader"> Dashboard </h1>
 
       {dataLoaded ? (
         <div>
           {tokenData.map((data) => (
             <div key={data.id} className="tokenItem">
-              <h4>{data.mint}</h4>
-              <p>{data.supply}</p>
-              <button onClick={()=> manage(data.mint) }>Manage</button>
+              <p  className="dataMint">{data.mint}</p>
+              <p  className="dataSupply">{data.supply}</p>
+              <button  className="decimalsButton" onClick={()=> manage(data.mint) }>Manage</button>
             </div>
           ))}
         </div>
       ) : (
-        <h1>Loading</h1>
+        <h1 className="dashboardHeader">Loading...</h1>
       )}
     </>
   );

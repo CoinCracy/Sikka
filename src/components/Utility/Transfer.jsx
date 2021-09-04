@@ -3,6 +3,7 @@ import {
   transferTokens,
   createAssociatedTokenAccount,
 } from "../../lib/createUtils";
+import "../../CSS/transfer.scss"
 
 import { PublicKey } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
@@ -91,13 +92,14 @@ function TransferModal(props) {
 
   return (
     <div className="transfer-modal">
-      <label htmlFor="#amount">Amount</label>
-      <input type="text" id="amount"></input>
+      <label className="label" htmlFor="#amount">Amount</label>
+      <input  className ="decimals" type="text" id="amount"></input>
 
-      <label htmlFor="#recipient">Receiver</label>
-      <input type="text" id="recipient"></input>
+      <label className="label"  htmlFor="#recipient">Receiver</label>
+      <input  className ="decimals" type="text" id="recipient"></input>
 
       <button
+         className = "transfer-button" 
         onClick={() =>
           transfer(
             document.getElementById("amount").value,

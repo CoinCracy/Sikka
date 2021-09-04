@@ -7,7 +7,8 @@ import "../CSS/token.css"
 //Utils
 import { createNewToken , createTokenAccount, createAssociatedTokenAccount, mintToken } from '../lib/createUtils'
 import { getNodeRpcURL, getTxExplorerURL, getNodeWsURL ,getAccountExplorerURL  } from '../lib/utils';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import TokenSteps from './TokenSteps';
 
 function TokenCreator(props) {
 
@@ -87,61 +88,39 @@ const tokenSupply = document.getElementById("token-supply").value
  props.setToken({mintAddress : tokenAddress , accountAddress : tokenAccountAddress })
  setStep(4)
 }
-
-
-return (
-<div id="create-token">
-
-{step === 1 ? 
-  <div className = "step" id="create-mint">
-  <input id="token-name" placeholder= "Token Name" type="text"></input>
-  <input id="token-code" placeholder= "Token Code" type="text"></input>
-  <input id="decimals" placeholder= "Decimals" type="text"></input>
-  <button onClick={ createToken } >Create Token </button>
-  </div>
-   :  
-   <div className = "step" id="create-mint">
-  <input disabled id="token-name" placeholder= "Token Name" type="text"></input>
-  <input disabled id="token-code" placeholder= "Token Code" type="text"></input>
-  <input disabled id="decimals" placeholder= "Decimals" type="text"></input>
-  <button disabled onClick={ createToken } >Create Token </button>
-  </div>
+const getId = (step) => {
+  switch(step) {
+    case 1 :
+      return 'create-mint';
+    case 2 :
+      return 'initialize-token-account';
+    case 3 :
+      return 'transfer-token';
+    case 4 :
+      return 'create-mint';
   }
-  
-  {step === 2 ? 
-  <div className = "step" id="initialize-token-account">
-  <button onClick={ createTokenAcc } > Initialize A Token Account </button>
-  </div> :
-  step >= 2 ? 
-  <div className = "step" id="initialize-token-account">
-  <button disabled onClick={ createTokenAcc } > Initialize A Token Account </button>
-  </div> 
-  : null }
-
-  {step === 3 ? 
-  <div className = "step" id="transfer-token">
- <input id="token-supply" placeholder= "Token Supply" type="text"></input>
-  <button onClick={() =>  InitializeMintTo()} > Mint Tokens</button>
-  </div> 
-  :
-   step >= 3 ? 
-  <div className = "step"  id="transfer-token">
- <input disabled id="token-supply" placeholder= "Token Supply" type="text"></input>
-  <button disabled onClick={() =>  InitializeMintTo()} > Mint Tokens</button>
-  </div>
-   :
-  null}
-
-{
-  step === 4 ? 
-  <>
-  <button onClick={ dash }> Dashboard</button>
-  </>
-  : null
 }
 
+const getOnClick = (step) => {
+  switch(step) {
+    case 1 :
+      return ()=>createToken();
+    case 2 :
+      return ()=>createTokenAcc();
+    case 3 :
+      return ()=>InitializeMintTo();
+    case 4 :
+      return ()=> dash();
 
-    </div>
+  }
+}
+
+return (
+  <TokenSteps 
+    step={step}
+    id={getId(step)}
+    onClick={getOnClick(step)}
+  />
 )
 
 }
