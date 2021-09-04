@@ -26,7 +26,6 @@
     font-size: 14px;
     letter-spacing: 0.5px;
     z-index: 2;
-    text-transform: uppercase;
     align-self: center;
     line-height: 48px;
     cursor: pointer;
@@ -39,7 +38,12 @@
     display: flex;
     flex-shrink: 0;
     align-items: center;
+    font-family: DM Sans;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
     &.selectedItem {
+        color: #1A61EE;
         &::after {
             background: #1A61EE;
             max-width: 64px;

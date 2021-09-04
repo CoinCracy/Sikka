@@ -1,12 +1,13 @@
 import React, { useState, useRef, Fragment } from 'react';
 import TabControls from './TabControls';
 import TokenCreator from './token.jsx';
+import FanCoinPage from './FanCoinPage.js';
 import "../CSS/SikkaLandingPage.scss"
 
 function SikkaLandingPage(props) {
      const COIN_TYPE_LABELS = {
         social:'social',
-        free:'free',
+        fan:'fan',
       }
        const COIN_TYPE_TABS = [
         {
@@ -15,8 +16,8 @@ function SikkaLandingPage(props) {
           value: 0,
         },
         {
-          label: 'Free Coins',
-          key: 'free',
+          label: 'Fan Coins',
+          key: 'fan',
           value: 1,
         },
       ]
@@ -34,9 +35,9 @@ function SikkaLandingPage(props) {
                     <TokenCreator setToken=  {props.setToken} provider = {props.provider}/>
                 );
                 break;
-            case COIN_TYPE_LABELS.free :
+            case COIN_TYPE_LABELS.fan :
                 tabNode = (
-                    <Fragment/>
+                    <FanCoinPage />
                 )
                 break;
         }
