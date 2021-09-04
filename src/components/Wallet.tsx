@@ -6,7 +6,7 @@ import {
   clusterApiUrl,
   SystemProgram
 } from "@solana/web3.js";
-import "../CSS/connect.css"
+import "../CSS/connect.scss"
 
 
 type DisplayEncoding = "utf8" | "hex";
@@ -88,7 +88,10 @@ export default function Connect(props : any) {
 
   return (
   <div id = "navbar"> 
-<h2  className ="header">Sikka - Democratizing Tokens</h2>
+  <div className="sikkaHeader" >
+    <img src="sikkaLogo.svg" className ="headerImage" />
+    <h2  className ="header">Sikka - Democratizing Tokens</h2>
+  </div>
     <div id="connect-button">
       <main>
         {provider && provider.publicKey ? (

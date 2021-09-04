@@ -114,7 +114,7 @@ function Dashboard(props) {
           ))}
         </div>
       ) : (
-        <h1 className="dashboardHeader">Loading</h1>
+        <h1 className="dashboardHeader">Loading...</h1>
       )}
     </>
   );

@@ -101,7 +101,7 @@ const getId = (step) => {
   }
 }
 const getOnClick = (step) => {
-  switch(4) {
+  switch(step) {
     case 1 :
       return ()=>createToken();
     case 2 :
