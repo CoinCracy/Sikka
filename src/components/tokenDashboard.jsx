@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {useParams} from 'react-router-dom'
 import TransferModal from './Utility/Transfer' 
 import MintModal from './Utility/Mint' 
+import FreezeModal from './Utility/Freeze' 
 
 
 const getProvider = () => {
@@ -29,6 +30,7 @@ return (
     <div>
         <TransferModal provider={provider} mintAddress = { id }/>
         <MintModal provider={provider} mintAddress = { id }/>
+        <FreezeModal provider={provider} mintAddress = { id }/>
     </div>
 )
 }

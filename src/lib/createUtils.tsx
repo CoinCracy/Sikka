@@ -386,6 +386,60 @@ export function sendAndConfirmTransaction(
   });
 }
 
+export const freezeAccount = async (
+  feePayerSecret: string,
+  addressToFreeze: string,
+  freezeAuthoritySecret: string,
+  feePayerSignsExternally: boolean,
+  freezeAuthoritysignsExternally: boolean
+) => {
+  const pubkeyToFreeze = new PublicKey(addressToFreeze);
+  const tokenMintPubkey = await getMintPubkeyFromTokenAccountPubkey(
+    pubkeyToFreeze
+  );
+
+  const connection = getConnection();
+  if (feePayerSignsExternally || freezeAuthoritysignsExternally) {
+    const wallet = await UtilizeWallet();
+
+    const authorityAccOrWallet = freezeAuthoritysignsExternally
+      ? wallet
+      : await createAccount(freezeAuthoritySecret);
+
+    //@ts-ignore
+    const freezeIx = Token.createFreezeAccountInstruction(
+      TOKEN_PROGRAM_ID,
+      pubkeyToFreeze,
+      tokenMintPubkey,
+      //@ts-ignore
+      authorityAccOrWallet.publicKey,
+      []
+    );
+
+    await sendTxUsingExternalSignature(
+      [freezeIx],
+      connection,
+      feePayerSignsExternally ? null : await createAccount(feePayerSecret),
+      //@ts-ignore
+      freezeAuthoritysignsExternally ? [] : [authorityAccOrWallet],
+      wallet
+    );
+  } else {
+    const token = new Token(
+      connection,
+      tokenMintPubkey,
+      TOKEN_PROGRAM_ID,
+      await createAccount(feePayerSecret)
+    );
+
+    await token.freezeAccount(
+      pubkeyToFreeze,
+      await createAccount(freezeAuthoritySecret),
+      []
+    );
+  }
+};
+
 
 
 
