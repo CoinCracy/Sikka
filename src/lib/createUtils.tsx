@@ -386,6 +386,61 @@ export function sendAndConfirmTransaction(
   });
 }
 
+export const burnTokens = async (
+  feePayerSecret: string,
+  tokenAccountAddress: string,
+  ownerSecret: string,
+  amount: u64,
+  feePayerSignsExternally: boolean,
+  accountOwnerSignsExternally: boolean
+) => {
+  const tokenAccountPubkey = new PublicKey(tokenAccountAddress);
+  const tokenMintPubkey = await getMintPubkeyFromTokenAccountPubkey(
+    tokenAccountPubkey
+  );
+  const connection = getConnection();
+
+  if (feePayerSignsExternally || accountOwnerSignsExternally) {
+    const wallet = await UtilizeWallet();
+
+    const currentOwnerAccOrWallet = accountOwnerSignsExternally
+      ? wallet
+      : await createAccount(ownerSecret);
+
+    const ix = Token.createBurnInstruction(
+      TOKEN_PROGRAM_ID,
+      tokenMintPubkey,
+      tokenAccountPubkey,
+      //@ts-ignore
+      currentOwnerAccOrWallet.publicKey,
+      [],
+      amount
+    );
+    await sendTxUsingExternalSignature(
+      [ix],
+      connection,
+      feePayerSignsExternally ? null : await createAccount(feePayerSecret),
+      //@ts-ignore
+      accountOwnerSignsExternally ? [] : [currentOwnerAccOrWallet],
+      wallet
+    );
+  } else {
+    const token = new Token(
+      connection,
+      tokenMintPubkey,
+      TOKEN_PROGRAM_ID,
+      await createAccount(feePayerSecret)
+    );
+
+    await token.burn(
+      tokenAccountPubkey,
+      await createAccount(ownerSecret),
+      [],
+      amount
+    );
+  }
+};
+
 export const freezeAccount = async (
   feePayerSecret: string,
   addressToFreeze: string,

@@ -3,6 +3,7 @@ import {useParams} from 'react-router-dom'
 import TransferModal from './Utility/Transfer' 
 import MintModal from './Utility/Mint' 
 import FreezeModal from './Utility/Freeze' 
+import BurnModal from './Utility/Burn'
 
 
 const getProvider = () => {
@@ -31,6 +32,7 @@ return (
         <TransferModal provider={provider} mintAddress = { id }/>
         <MintModal provider={provider} mintAddress = { id }/>
         <FreezeModal provider={provider} mintAddress = { id }/>
+        <BurnModal provider={provider} mintAddress = { id }/>
     </div>
 )
 }
