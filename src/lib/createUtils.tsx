@@ -281,27 +281,10 @@ export const mintToken = async (
   }
 };
 
-
-export const findAssociatedTokenAccountPublicKey = async (
-  ownerPublicKey: PublicKey,
-  tokenMintPublicKey: PublicKey
-) =>
-  (
-    await PublicKey.findProgramAddress(
-      [
-        ownerPublicKey.toBuffer(),
-        TOKEN_PROGRAM_ID.toBuffer(),
-        tokenMintPublicKey.toBuffer()
-      ],
-      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
-    )
-  )[0];
-
 const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
   "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 );
 
-// Create Instructions 
 const createIx = (
   funderPubkey: PublicKey,
   associatedTokenAccountPublicKey: PublicKey,
@@ -326,6 +309,25 @@ const createIx = (
     ]
   });
 
+  //Finds Associated Token Account Public key
+export const findAssociatedTokenAccountPublicKey = async (
+  ownerPublicKey: PublicKey,
+  tokenMintPublicKey: PublicKey
+) =>
+  (
+    await PublicKey.findProgramAddress(
+      [
+        ownerPublicKey.toBuffer(),
+        TOKEN_PROGRAM_ID.toBuffer(),
+        tokenMintPublicKey.toBuffer()
+      ],
+      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+    )
+  )[0];
+
+
+// Create Instructions 
+
 
 
 export const createAssociatedTokenAccount = async (
@@ -335,6 +337,7 @@ export const createAssociatedTokenAccount = async (
   ownerAddress: string
 ) => {
   const tokenMintPublicKey = new PublicKey(tokenMintAddress);
+  console.log(ownerAddress);
   const ownerPublicKey = new PublicKey(ownerAddress);
   const associatedTokenAccountPublicKey = await findAssociatedTokenAccountPublicKey(
     ownerPublicKey,
@@ -382,6 +385,115 @@ export function sendAndConfirmTransaction(
     commitment: 'singleGossip'
   });
 }
+
+export const burnTokens = async (
+  feePayerSecret: string,
+  tokenAccountAddress: string,
+  ownerSecret: string,
+  amount: u64,
+  feePayerSignsExternally: boolean,
+  accountOwnerSignsExternally: boolean
+) => {
+  const tokenAccountPubkey = new PublicKey(tokenAccountAddress);
+  const tokenMintPubkey = await getMintPubkeyFromTokenAccountPubkey(
+    tokenAccountPubkey
+  );
+  const connection = getConnection();
+
+  if (feePayerSignsExternally || accountOwnerSignsExternally) {
+    const wallet = await UtilizeWallet();
+
+    const currentOwnerAccOrWallet = accountOwnerSignsExternally
+      ? wallet
+      : await createAccount(ownerSecret);
+
+    const ix = Token.createBurnInstruction(
+      TOKEN_PROGRAM_ID,
+      tokenMintPubkey,
+      tokenAccountPubkey,
+      //@ts-ignore
+      currentOwnerAccOrWallet.publicKey,
+      [],
+      amount
+    );
+    await sendTxUsingExternalSignature(
+      [ix],
+      connection,
+      feePayerSignsExternally ? null : await createAccount(feePayerSecret),
+      //@ts-ignore
+      accountOwnerSignsExternally ? [] : [currentOwnerAccOrWallet],
+      wallet
+    );
+  } else {
+    const token = new Token(
+      connection,
+      tokenMintPubkey,
+      TOKEN_PROGRAM_ID,
+      await createAccount(feePayerSecret)
+    );
+
+    await token.burn(
+      tokenAccountPubkey,
+      await createAccount(ownerSecret),
+      [],
+      amount
+    );
+  }
+};
+
+export const freezeAccount = async (
+  feePayerSecret: string,
+  addressToFreeze: string,
+  freezeAuthoritySecret: string,
+  feePayerSignsExternally: boolean,
+  freezeAuthoritysignsExternally: boolean
+) => {
+  const pubkeyToFreeze = new PublicKey(addressToFreeze);
+  const tokenMintPubkey = await getMintPubkeyFromTokenAccountPubkey(
+    pubkeyToFreeze
+  );
+
+  const connection = getConnection();
+  if (feePayerSignsExternally || freezeAuthoritysignsExternally) {
+    const wallet = await UtilizeWallet();
+
+    const authorityAccOrWallet = freezeAuthoritysignsExternally
+      ? wallet
+      : await createAccount(freezeAuthoritySecret);
+
+    //@ts-ignore
+    const freezeIx = Token.createFreezeAccountInstruction(
+      TOKEN_PROGRAM_ID,
+      pubkeyToFreeze,
+      tokenMintPubkey,
+      //@ts-ignore
+      authorityAccOrWallet.publicKey,
+      []
+    );
+
+    await sendTxUsingExternalSignature(
+      [freezeIx],
+      connection,
+      feePayerSignsExternally ? null : await createAccount(feePayerSecret),
+      //@ts-ignore
+      freezeAuthoritysignsExternally ? [] : [authorityAccOrWallet],
+      wallet
+    );
+  } else {
+    const token = new Token(
+      connection,
+      tokenMintPubkey,
+      TOKEN_PROGRAM_ID,
+      await createAccount(feePayerSecret)
+    );
+
+    await token.freezeAccount(
+      pubkeyToFreeze,
+      await createAccount(freezeAuthoritySecret),
+      []
+    );
+  }
+};
 
 
 

@@ -1,37 +1,93 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   transferTokens,
   createAssociatedTokenAccount,
-  findAssociatedTokenAccountPublicKey,
 } from "../../lib/createUtils";
 import "../../CSS/transfer.scss"
 
-function TransferModal(props) {
-  async function transfer(amount, receiver) {
-    console.log(receiver);
-    const associatedTokenAccount = await createAssociatedTokenAccount(
-      null,
-      true,
-      props.mintAddress,
-      props.provider.publicKey.toString()
-    );
-    const sourceAddress = await findAssociatedTokenAccountPublicKey(
-      props.provider.publicKey.toString(),
-      props.mintAddress
-    );
+import { PublicKey } from "@solana/web3.js";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+const getProvider = () => {
+  if ("solana" in window) {
+    const provider = window.solana;
+    if (provider.isPhantom) {
+      return provider;
+    }
+  }
+};
 
-    await transferTokens(
-      null,
-      sourceAddress,
-      props.mintAddress,
-      associatedTokenAccount,
-      null,
-      amount,
-      true,
-      true
-    ).then((data) => {
-      console.log(data);
-    });
+const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
+  "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+);
+
+function TransferModal(props) {
+  const [assAccountCreated, setAssAccountCreated] = useState(false);
+
+  async function findAssociatedTokenAddress(walletAddress, tokenMintAddress) {
+    return (
+      await PublicKey.findProgramAddress(
+        [
+          walletAddress.toBuffer(),
+          TOKEN_PROGRAM_ID.toBuffer(),
+          tokenMintAddress.toBuffer(),
+        ],
+        SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+      )
+    )[0];
+  }
+
+  const provider = getProvider();
+
+  async function transfer(amount, receiver) {
+    if (assAccountCreated) {
+      const associatedTokenAccount = await findAssociatedTokenAddress(
+        new PublicKey(receiver),
+        new PublicKey(props.mintAddress)
+      );
+
+      const sourceAddress = await findAssociatedTokenAddress(
+        new PublicKey(provider.publicKey.toString()),
+        new PublicKey(props.mintAddress)
+      );
+      console.log(sourceAddress.toString());
+
+      await transferTokens(
+        null,
+        new PublicKey(sourceAddress.toString()),
+        new PublicKey(associatedTokenAccount.toString()),
+        null,
+        amount,
+        true,
+        true
+      ).then((data) => {
+        console.log(data);
+      });
+    } else {
+      const associatedTokenAccount = await createAssociatedTokenAccount(
+        null,
+        true,
+        props.mintAddress,
+        receiver
+      ).then(setAssAccountCreated(true));
+
+      const sourceAddress = await findAssociatedTokenAddress(
+        new PublicKey(provider.publicKey.toString()),
+        new PublicKey(props.mintAddress)
+      );
+      console.log(sourceAddress.toString());
+
+      await transferTokens(
+        null,
+        new PublicKey(sourceAddress.toString()),
+        new PublicKey(associatedTokenAccount.toString()),
+        null,
+        amount,
+        true,
+        true
+      ).then((data) => {
+        console.log(data);
+      });
+    }
   }
 
   return (
