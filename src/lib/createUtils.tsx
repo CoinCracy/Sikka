@@ -337,6 +337,7 @@ export const createAssociatedTokenAccount = async (
   ownerAddress: string
 ) => {
   const tokenMintPublicKey = new PublicKey(tokenMintAddress);
+  console.log(ownerAddress);
   const ownerPublicKey = new PublicKey(ownerAddress);
   const associatedTokenAccountPublicKey = await findAssociatedTokenAccountPublicKey(
     ownerPublicKey,

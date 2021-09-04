@@ -20,7 +20,7 @@ const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
 );
 
 function MintModal(props) {
-  const [assAccountCreated, setAssAccountCreated] = useState(false);
+  const [mintassAccountCreated, setmintAssAccountCreated] = useState(false);
 
   async function findAssociatedTokenAddress(walletAddress, tokenMintAddress) {
     return (
@@ -38,21 +38,20 @@ function MintModal(props) {
   const provider = getProvider();
 
   async function mint(amount, receiver) {
-    if (assAccountCreated) {
-      const associatedTokenAccount = await findAssociatedTokenAddress(
-        new PublicKey(receiver),
-        new PublicKey(props.mintAddress)
-      );
-
-
-      await mintToken(
-        null,
-        null,
-        new PublicKey(associatedTokenAccount.toString()),
-        amount,
-        true,
-        true
-      ).then((data) => {
+    if (mintassAccountCreated) {
+        const associatedTokenAccount = await findAssociatedTokenAddress(
+            new PublicKey(receiver),
+            new PublicKey(props.mintAddress)
+          );
+    
+          await mintToken(
+            null,
+            null,
+            new PublicKey(associatedTokenAccount.toString()),
+            amount,
+            true,
+            true
+          ).then((data) => {
         console.log(data);
       });
     } else {
@@ -61,7 +60,7 @@ function MintModal(props) {
         true,
         props.mintAddress,
         receiver
-      ).then(setAssAccountCreated(true));
+      ).then(setmintAssAccountCreated(true));
 
       await mintToken(
         null,
@@ -78,17 +77,17 @@ function MintModal(props) {
 
   return (
     <div className="mint-modal">
-      <label htmlFor="#amount">Amount</label>
-      <input type="text" id="amount"></input>
+      <label htmlFor="#mintamount">Amount</label>
+      <input type="text" id="mintamount"></input>
 
-      <label htmlFor="#recipient">Receiver</label>
-      <input type="text" id="recipient"></input>
+      <label htmlFor="#mintrecipient">Receiver</label>
+      <input type="text" id="mintrecipient"></input>
 
       <button
         onClick={() =>
           mint(
-            document.getElementById("amount").value,
-            document.getElementById("recipient").value
+            document.getElementById("mintamount").value,
+            document.getElementById("mintrecipient").value
           )
         }
       >
